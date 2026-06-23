@@ -10,7 +10,7 @@ type Server struct {
 	Port int
 }
 
-func NweServer(ip string, port int) *Server {
+func NewServer(ip string, port int) *Server {
 	server := &Server{
 		Ip:   ip,
 		Port: port,
