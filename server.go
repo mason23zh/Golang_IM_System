@@ -28,6 +28,7 @@ func NewServer(ip string, port int) *Server {
 	return server
 }
 
+// listen message chan in server, once received, send to all users
 func (s *Server) ListenMessager() {
 	for {
 		msg := <-s.Message
@@ -55,7 +56,7 @@ func (s *Server) Handler(conn net.Conn) {
 	s.OnlineMap[user.Name] = user
 	s.mapLock.Unlock()
 
-	// broadcast
+	// broadcast current user online message to server
 	s.Broadcast(user, "Online")
 }
 
@@ -68,6 +69,7 @@ func (s *Server) Start() {
 
 	defer listen.Close()
 
+	//start messager listen process
 	go s.ListenMessager()
 
 	for {
