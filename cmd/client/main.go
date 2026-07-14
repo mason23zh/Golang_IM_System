@@ -15,6 +15,15 @@ type Client struct {
 	flag       int //current client mode
 }
 
+var serverIp string
+var serverPort int
+
+// ./client -ip 127.0.0.1 -port 8080
+func init() {
+	flag.StringVar(&serverIp, "ip", "127.0.0.1", "setting server IP address")
+	flag.IntVar(&serverPort, "port", 8080, "setting server port number")
+}
+
 func (c *Client) Run() {
 	for c.flag != 0 {
 		for c.menu() != true {
@@ -69,15 +78,6 @@ func NewClient(serverIp string, serverPort int) (*Client, error) {
 
 	client.conn = conn
 	return client, nil
-}
-
-var serverIp string
-var serverPort int
-
-// ./client -ip 127.0.0.1 -port 8080
-func init() {
-	flag.StringVar(&serverIp, "ip", "127.0.0.1", "setting server IP address")
-	flag.IntVar(&serverPort, "port", 8080, "setting server port number")
 }
 
 func main() {
