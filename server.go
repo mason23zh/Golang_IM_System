@@ -51,15 +51,9 @@ func (s *Server) Broadcast(user *User, msg string) {
 // handle user online
 func (s *Server) Handler(conn net.Conn) {
 	// create new user
-	user := NewUser(conn)
+	user := NewUser(conn, s)
 
-	// add user to online map
-	s.mapLock.Lock()
-	s.OnlineMap[user.Name] = user
-	s.mapLock.Unlock()
-
-	// broadcast current user online message to server
-	s.Broadcast(user, "Online")
+	user.Online()
 
 	// receive message from the client
 	go func() {
@@ -71,7 +65,7 @@ func (s *Server) Handler(conn net.Conn) {
 				return
 			}
 			if n == 0 {
-				s.Broadcast(user, "Offline")
+				user.OffLine()
 				return
 			}
 
@@ -79,7 +73,7 @@ func (s *Server) Handler(conn net.Conn) {
 			msg := string(buf[:n-1])
 
 			// broadcast the msg
-			s.Broadcast(user, msg)
+			user.DoMessage(msg)
 		}
 	}()
 }
