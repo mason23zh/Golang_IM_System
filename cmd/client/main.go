@@ -40,7 +40,6 @@ func (c *Client) Run() {
 		case 3:
 			// change name mode
 			c.UpdateName()
-			break
 		}
 	}
 }
