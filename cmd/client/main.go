@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"time"
 )
 
 type Client struct {
@@ -14,6 +13,24 @@ type Client struct {
 	Name       string
 	conn       net.Conn
 	flag       int //current client mode
+}
+
+func (c *Client) Run() {
+	for c.flag != 0 {
+		for c.menu() != true {
+		}
+		switch c.flag {
+		case 1:
+			// public chat mode
+			fmt.Println("public chat mode")
+		case 2:
+			// private chat mode
+			fmt.Println("private chat mode")
+		case 3:
+			// change name mode
+			fmt.Println("change name mode")
+		}
+	}
 }
 
 func (c *Client) menu() bool {
@@ -35,10 +52,12 @@ func (c *Client) menu() bool {
 		return false
 	}
 }
+
 func NewClient(serverIp string, serverPort int) (*Client, error) {
 	client := &Client{
 		ServeIp:    serverIp,
 		ServerPort: serverPort,
+		flag:       -1, // cannot use zero value otherwise it will exit
 	}
 
 	// connect to server
@@ -65,11 +84,12 @@ func main() {
 	//cli parsing
 	flag.Parse()
 
-	_, err := NewClient(serverIp, serverPort)
+	client, err := NewClient(serverIp, serverPort)
 	if err != nil {
 		fmt.Println(">>>Error connecting to server...")
 	}
 
-	fmt.Println(">>>Success connecting to server...l")
-	time.Sleep(5 * time.Minute)
+	fmt.Println(">>>Success connecting to server...")
+
+	client.Run()
 }
