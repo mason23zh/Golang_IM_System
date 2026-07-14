@@ -48,6 +48,7 @@ func (u *User) OffLine() {
 	u.server.mapLock.Lock()
 	if _, exist := u.server.OnlineMap[u.Name]; exist {
 		delete(u.server.OnlineMap, u.Name)
+		close(u.C)
 		u.server.mapLock.Unlock()
 
 		u.server.Broadcast(u, "Offline")
