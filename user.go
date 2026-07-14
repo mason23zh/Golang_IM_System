@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strings"
 )
 
 type User struct {
@@ -66,7 +67,7 @@ func (u *User) DoMessage(msg string) {
 
 		u.server.mapLock.Lock()
 		for _, user := range u.server.OnlineMap {
-			onlineMsg := fmt.Sprintf("[%s]%s:online...", user.Name, user.Addr)
+			onlineMsg := fmt.Sprintf("[%s]:online...\n", user.Name)
 			u.SendMessage(onlineMsg)
 		}
 		u.server.mapLock.Unlock()
