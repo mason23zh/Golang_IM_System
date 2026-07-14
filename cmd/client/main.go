@@ -13,8 +13,28 @@ type Client struct {
 	ServerPort int
 	Name       string
 	conn       net.Conn
+	flag       int //current client mode
 }
 
+func (c *Client) menu() bool {
+	// user input
+	var flag int
+
+	fmt.Println("1. Public Chat")
+	fmt.Println("2. Private Chat")
+	fmt.Println("3. Update user name")
+	fmt.Println("0. Exit")
+
+	fmt.Scanln(&flag)
+
+	if flag >= 0 && flag <= 3 {
+		c.flag = flag
+		return true
+	} else {
+		fmt.Println(">>>input out of range<<<")
+		return false
+	}
+}
 func NewClient(serverIp string, serverPort int) (*Client, error) {
 	client := &Client{
 		ServeIp:    serverIp,
