@@ -45,8 +45,9 @@ func (s *Server) Broadcast(user *User, msg string) {
 	s.Message <- sendMsg
 }
 
+// handle user online
 func (s *Server) Handler(conn net.Conn) {
-	// user online
+	// create new user
 	user := NewUser(conn)
 
 	// add user to online map
