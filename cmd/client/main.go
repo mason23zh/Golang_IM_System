@@ -3,8 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net"
+	"os"
 )
 
 type Client struct {
@@ -38,6 +40,7 @@ func (c *Client) Run() {
 		case 3:
 			// change name mode
 			c.UpdateName()
+			break
 		}
 	}
 }
@@ -80,11 +83,17 @@ func NewClient(serverIp string, serverPort int) (*Client, error) {
 	return client, nil
 }
 
+// handle server response, display in stdout
+func (c *Client) DealResponse() {
+	// block here, once c.conn has data, copy the data into stdout
+	io.Copy(os.Stdout, c.conn)
+}
+
 func (c *Client) UpdateName() bool {
 	fmt.Println(">>>enter user name<<<")
-	fmt.Scanln(c.Name)
+	fmt.Scanln(&c.Name)
 
-	sendMsg := "reanme|" + c.Name + "\n"
+	sendMsg := "rename|" + c.Name + "\n"
 	_, err := c.conn.Write([]byte(sendMsg))
 	if err != nil {
 		fmt.Println("conn.Write err:", err)
@@ -103,7 +112,12 @@ func main() {
 		fmt.Println(">>>Error connecting to server...")
 	}
 
+	// open a goroutine to handle server's response message
+	// handle server response
+	go client.DealResponse()
+
 	fmt.Println(">>>Success connecting to server...")
 
+	// send to server
 	client.Run()
 }
