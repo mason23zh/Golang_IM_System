@@ -72,6 +72,24 @@ func (u *User) DoMessage(msg string) {
 		}
 		u.server.mapLock.Unlock()
 
+	} else if len(msg) > 7 && msg[:7] == "rename|" {
+		//message format: rename|newname
+		newName := strings.Split(msg, "|")[1]
+
+		// check if name already exist
+		_, ok := u.server.OnlineMap[newName]
+		if ok {
+			u.SendMessage("Name already exists")
+		} else {
+			u.server.mapLock.Lock()
+			delete(u.server.OnlineMap, u.Name)
+			u.server.OnlineMap[newName] = u
+			u.server.mapLock.Unlock()
+
+			u.Name = newName
+			u.SendMessage(fmt.Sprintf("Name changed. New name %s\n", newName))
+		}
+
 	} else {
 		u.server.Broadcast(u, msg)
 	}
