@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"sync"
+	"time"
 )
 
 type Server struct {
@@ -55,6 +56,9 @@ func (s *Server) Handler(conn net.Conn) {
 
 	user.Online()
 
+	// a channel to listen if user is active
+	isLive := make(chan bool)
+
 	// receive message from the client
 	go func() {
 		buf := make([]byte, 4096)
@@ -74,8 +78,22 @@ func (s *Server) Handler(conn net.Conn) {
 
 			// broadcast the msg
 			user.DoMessage(msg)
+
+			// user broadcast message means user is still active
+			isLive <- true
 		}
 	}()
+
+	for {
+		select {
+		case <-isLive:
+		case <-time.After(time.Second * 10):
+			user.SendMessage("Auto kicked due to inactive")
+			user.OffLine()
+			conn.Close()
+			return
+		}
+	}
 }
 
 func (s *Server) Start() {
@@ -99,6 +117,6 @@ func (s *Server) Start() {
 		}
 
 		// handler
-		s.Handler(conn)
+		go s.Handler(conn)
 	}
 }
