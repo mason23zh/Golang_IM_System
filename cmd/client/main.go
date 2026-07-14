@@ -37,7 +37,7 @@ func (c *Client) Run() {
 			fmt.Println("private chat mode")
 		case 3:
 			// change name mode
-			fmt.Println("change name mode")
+			c.UpdateName()
 		}
 	}
 }
@@ -78,6 +78,20 @@ func NewClient(serverIp string, serverPort int) (*Client, error) {
 
 	client.conn = conn
 	return client, nil
+}
+
+func (c *Client) UpdateName() bool {
+	fmt.Println(">>>enter user name<<<")
+	fmt.Scanln(c.Name)
+
+	sendMsg := "reanme|" + c.Name + "\n"
+	_, err := c.conn.Write([]byte(sendMsg))
+	if err != nil {
+		fmt.Println("conn.Write err:", err)
+		return false
+	}
+
+	return true
 }
 
 func main() {
