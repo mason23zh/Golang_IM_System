@@ -1,9 +1,11 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net"
+	"time"
 )
 
 type Client struct {
@@ -30,12 +32,24 @@ func NewClient(serverIp string, serverPort int) (*Client, error) {
 	return client, nil
 }
 
+var serverIp string
+var serverPort int
+
+// ./client -ip 127.0.0.1 -port 8080
+func init() {
+	flag.StringVar(&serverIp, "ip", "127.0.0.1", "setting server IP address")
+	flag.IntVar(&serverPort, "port", 8080, "setting server port number")
+}
+
 func main() {
-	_, err := NewClient("127.0.0.1", 8080)
+	//cli parsing
+	flag.Parse()
+
+	_, err := NewClient(serverIp, serverPort)
 	if err != nil {
 		fmt.Println(">>>Error connecting to server...")
 	}
 
 	fmt.Println(">>>Success connecting to server...l")
-	select {}
+	time.Sleep(5 * time.Minute)
 }
