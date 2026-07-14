@@ -51,9 +51,10 @@ func (u *User) OffLine() {
 		u.server.mapLock.Unlock()
 
 		u.server.Broadcast(u, "Offline")
-	} else {
-		log.Printf("User not exist")
 	}
+
+	u.server.mapLock.Unlock()
+	log.Printf("User not exist")
 }
 
 func (u *User) SendMessage(msg string) {
