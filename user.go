@@ -5,20 +5,22 @@ import (
 )
 
 type User struct {
-	Name string
-	Addr string
-	C    chan string
-	conn net.Conn
+	Name   string
+	Addr   string
+	C      chan string
+	conn   net.Conn
+	server *Server //which server is current user belong to
 }
 
-func NewUser(conn net.Conn) *User {
+func NewUser(conn net.Conn, server *Server) *User {
 	userAddr := conn.RemoteAddr().String()
 
 	user := &User{
-		Name: userAddr,
-		Addr: userAddr,
-		C:    make(chan string),
-		conn: conn,
+		Name:   userAddr,
+		Addr:   userAddr,
+		C:      make(chan string),
+		conn:   conn,
+		server: server,
 	}
 
 	go user.ListenMessage()
