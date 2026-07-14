@@ -93,7 +93,36 @@ func (u *User) DoMessage(msg string) {
 			u.SendMessage(fmt.Sprintf("Name changed. New name %s\n", newName))
 		}
 
+	} else if len(msg) > 4 && msg[:3] == "to|" {
+		// message format: to|name|msg content
+
+		//get user Name
+		remoteName := strings.Split(msg, "|")[1]
+		if remoteName == "" {
+			u.SendMessage("Wrong message format, use \"to|name|content\"\n")
+			return
+		}
+
+		// check if user exist
+		remoteUser, ok := u.server.OnlineMap[remoteName]
+		if !ok {
+			u.SendMessage("User does not exist")
+			return
+		}
+
+		remoteContent := strings.Split(msg, "|")[2]
+		if remoteContent == "" {
+			u.SendMessage("Empty message, please re-send\n")
+			return
+		}
+
+		remoteUser.SendMessage(fmt.Sprintf("[DM]%s:%s", u.Name, remoteContent))
+
 	} else {
+		if msg == "" {
+			u.SendMessage("Empty message, please re-send\n")
+			return
+		}
 		u.server.Broadcast(u, msg)
 	}
 }
