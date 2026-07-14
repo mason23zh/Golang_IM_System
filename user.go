@@ -51,6 +51,7 @@ func (u *User) OffLine() {
 		u.server.mapLock.Unlock()
 
 		u.server.Broadcast(u, "Offline")
+		return
 	}
 
 	u.server.mapLock.Unlock()
