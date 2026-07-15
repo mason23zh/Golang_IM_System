@@ -86,7 +86,8 @@ func NewClient(serverIp string, serverPort int) (*Client, error) {
 // handle server response, display in stdout
 func (c *Client) DealResponse() {
 	// block here, once c.conn has data, copy the data into stdout
-	io.Copy(os.Stdout, c.conn)
+	_, err := io.Copy(os.Stdout, c.conn)
+	fmt.Println("Error sending server response to client:", err)
 }
 
 func (c *Client) UpdateName() bool {
@@ -179,6 +180,7 @@ func main() {
 	client, err := NewClient(serverIp, serverPort)
 	if err != nil {
 		fmt.Println(">>>Error connecting to server...")
+		return
 	}
 
 	// open a goroutine to handle server's response message
