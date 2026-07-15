@@ -37,7 +37,7 @@ func (c *Client) Run() {
 			c.PublicChat()
 		case 2:
 			// private chat mode
-			fmt.Println("private chat mode")
+			c.PrivateChat()
 		case 3:
 			// change name mode
 			c.UpdateName()
@@ -124,6 +124,50 @@ func (c *Client) PublicChat() {
 	}
 	if err := scanner.Err(); err != nil {
 		fmt.Println("error process input:", err)
+	}
+}
+
+// query online user
+func (c *Client) FindOnlineUsers() {
+	sendMsg := "who\n"
+	_, err := c.conn.Write([]byte(sendMsg))
+	if err != nil {
+		fmt.Println("conn Write err:", err)
+	}
+}
+
+func (c *Client) PrivateChat() {
+	var remoteName string
+
+	c.FindOnlineUsers()
+
+	fmt.Println(">>>enter user name to start private chat, 'exit' to quit<<<")
+	fmt.Scanln(&remoteName)
+
+	scanner := bufio.NewScanner(os.Stdin)
+
+	if remoteName != "exit" {
+		fmt.Println(">>>enter chat message, 'exit' to quit<<<")
+
+		for scanner.Scan() {
+			line := scanner.Text()
+			if line == "exit" {
+				break
+			}
+			if len(line) != 0 {
+				sendMsg := "to|" + remoteName + "|" + line + "\n\n"
+				_, err := c.conn.Write([]byte(sendMsg))
+				if err != nil {
+					fmt.Println("conn Write err:", err)
+					break
+				}
+
+			}
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Println("error process intpu:", err)
 	}
 
 }
