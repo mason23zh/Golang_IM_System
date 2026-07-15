@@ -1,0 +1,12 @@
+# Build output
+bin/
+
+# Go test/build artifacts
+*.test
+*.out
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
